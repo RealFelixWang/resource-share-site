@@ -228,29 +228,7 @@
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand">
-                <a href="/">
-                    <i class="fas fa-share-alt"></i>
-                    <span>资源分享平台</span>
-                </a>
-            </div>
-            <div class="nav-menu">
-                <a href="/">首页</a>
-                <a href="/resources">资源</a>
-                <a href="/articles">文章博客</a>
-                <a href="/categories">分类</a>
-                <a href="/search">搜索</a>
-                <a href="/login" class="active" style="margin-left: auto;">登录</a>
-                <button class="btn-register" onclick="location.href='/register'" style="margin-left: 10px; padding: 8px 20px; background: #43e97b; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    <i class="fas fa-user-plus"></i>
-                    注册
-                </button>
-            </div>
-        </div>
-    </nav>
+    {{template "components/navbar" .}}
 
     <div class="auth-container">
         <div class="auth-box">
