@@ -302,7 +302,7 @@ sudo systemctl start resource-share
 
 **Felix Wang**
 - Email: felixwang.biz@gmail.com
-- GitHub: [@yourusername](https://github.com/yourusername)
+- GitHub: [@RealFelixWang](https://github.com/RealFelixWang)
 
 ## 🙏 致谢
 
