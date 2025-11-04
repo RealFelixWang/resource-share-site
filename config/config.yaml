@@ -1,0 +1,52 @@
+# 资源分享平台配置文件
+# 环境: development | test | production
+
+# 应用配置
+app:
+  name: "ResourceShareSite"
+  version: "1.0.0"
+  environment: "development" # development/test/production
+  host: "0.0.0.0"
+  port: 8080
+  secret_key: "your-secret-key-change-in-production" # 生产环境请修改!
+  timeout: 30 # 请求超时时间(秒)
+  max_body_size: 10 # 最大请求体大小(MB)
+
+# 数据库配置
+database:
+  type: "sqlite" # mysql/sqlite
+  host: "localhost"
+  port: "3306"
+  name: "resource_share_site"
+  user: "root"
+  password: "123456"
+  charset: "utf8mb4"
+
+# Redis配置(可选)
+redis:
+  host: "localhost"
+  port: "6379"
+  password: "" # 如果Redis有密码，请填写
+  db: 0 # 数据库编号(0-15)
+
+# 日志配置
+log:
+  level: "info" # debug/info/warn/error
+  format: "text" # text/json
+  output: "stdout" # stdout/file
+  filename: "logs/app.log" # 当output=file时有效
+  max_size: 100 # 文件最大大小(MB)
+  max_age: 30 # 文件保留天数
+  max_backups: 10 # 文件备份数量
+
+# 说明:
+# 1. 可以通过环境变量覆盖配置，以RSS_开头，例如: RSS_APP_PORT=8080
+# 2. 生产环境建议:
+#    - 修改secret_key为随机字符串
+#    - 设置database.password为强密码
+#    - 设置redis.password(如果需要)
+#    - 设置log.output为file
+# 3. 不同环境的配置:
+#    - config-development.yaml  (开发环境)
+#    - config-test.yaml        (测试环境)
+#    - config-production.yaml  (生产环境)

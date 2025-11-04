@@ -1,0 +1,18 @@
+# 开发环境配置
+app:
+  environment: "development"
+  level: "debug"
+  log:
+    level: "debug"
+    format: "text"
+    output: "stdout"
+
+database:
+  type: "sqlite"
+  name: "resource_share_site_dev"
+
+redis:
+  enabled: false  # 开发环境可以关闭Redis
+
+log:
+  level: "debug"

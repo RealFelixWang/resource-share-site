@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="资源分享平台 - 浏览和搜索您需要的资源">
+    <title>资源列表 - 资源分享平台</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .search-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px 0;
+            margin-top: 60px;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .search-title {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .search-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 50px;
+            outline: none;
+        }
+
+        .search-btn {
+            padding: 15px 30px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 1200px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-item label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .filter-item select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .resources-grid {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .resource-thumb {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+
+        .resource-info {
+            padding: 20px;
+        }
+
+        .resource-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .resource-desc {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .resource-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .resource-stats {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .resource-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-results i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sort-btn {
+            padding: 8px 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sort-btn:hover, .sort-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/">
+                    <i class="fas fa-share-alt"></i>
+                    <span>资源分享平台</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="/">首页</a>
+                <a href="/resources" class="active">资源</a>
+                <a href="/articles">文章博客</a>
+                <a href="/categories">分类</a>
+                <a href="/search">搜索</a>
+                <button class="btn-login" onclick="location.href='/login'">
+                    <i class="fas fa-sign-in-alt"></i>
+                    登录
+                </button>
+                <button class="btn-register" onclick="location.href='/register'" style="margin-left: 10px; padding: 8px 20px; background: #43e97b; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-user-plus"></i>
+                    注册
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 搜索区域 -->
+    <section class="search-section">
+        <div class="search-container">
+            <h1 class="search-title">
+                <i class="fas fa-search"></i>
+                发现优质资源
+            </h1>
+            <p class="search-subtitle">搜索您需要的软件、教程、资料或工具</p>
+            <form class="search-form" action="/search" method="GET">
+                <input type="text" class="search-input" name="q" placeholder="输入关键词搜索资源..." id="searchInput">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                    搜索
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- 筛选器 -->
+    <div class="filters">
+        <div class="filter-group">
+            <div class="filter-item">
+                <label>分类:</label>
+                <select id="categoryFilter" onchange="filterResources()">
+                    <option value="">全部分类</option>
+                    <option value="software">软件工具</option>
+                    <option value="document">电子资料</option>
+                    <option value="multimedia">多媒体</option>
+                    <option value="game">游戏</option>
+                    <option value="other">其他</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>排序:</label>
+                <select id="sortFilter" onchange="filterResources()">
+                    <option value="latest">最新发布</option>
+                    <option value="popular">最多下载</option>
+                    <option value="rating">最高评分</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>文件类型:</label>
+                <select id="typeFilter" onchange="filterResources()">
+                    <option value="">全部类型</option>
+                    <option value="zip">压缩包</option>
+                    <option value="pdf">PDF</option>
+                    <option value="video">视频</option>
+                    <option value="image">图片</option>
+                    <option value="other">其他</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- 资源列表 -->
+    <div class="resources-grid" id="resourcesGrid">
+        <!-- 示例资源卡片 -->
+        <div class="resource-card" onclick="viewResource(1)">
+            <div class="resource-thumb">
+                <i class="fas fa-code"></i>
+            </div>
+            <div class="resource-info">
+                <h3 class="resource-title">Go语言入门教程</h3>
+                <p class="resource-desc">从零开始学习Go语言编程，包含基础语法、实战项目和最佳实践。本教程适合编程初学者和有一定基础的开发者。</p>
+                <div class="resource-meta">
+                    <span class="resource-category">电子资料</span>
+                    <div class="resource-stats">
+                        <span><i class="fas fa-download"></i> 1,234</span>
+                        <span><i class="fas fa-star"></i> 4.8</span>
+                        <span><i class="fas fa-clock"></i> 2天前</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="resource-card" onclick="viewResource(2)">
+            <div class="resource-thumb">
+                <i class="fas fa-desktop"></i>
+            </div>
+            <div class="resource-info">
+                <h3 class="resource-title">Visual Studio Code编辑器</h3>
+                <p class="resource-desc">微软开源的免费代码编辑器，支持多种编程语言，丰富的插件生态系统，是现代开发者必备工具。</p>
+                <div class="resource-meta">
+                    <span class="resource-category">软件工具</span>
+                    <div class="resource-stats">
+                        <span><i class="fas fa-download"></i> 5,678</span>
+                        <span><i class="fas fa-star"></i> 4.9</span>
+                        <span><i class="fas fa-clock"></i> 1周前</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="resource-card" onclick="viewResource(3)">
+            <div class="resource-thumb">
+                <i class="fas fa-film"></i>
+            </div>
+            <div class="resource-info">
+                <h3 class="resource-title">Docker容器化技术视频教程</h3>
+                <p class="resource-desc">深入学习Docker容器技术，包括镜像、容器、网络、数据管理等核心概念，以及实际项目部署经验。</p>
+                <div class="resource-meta">
+                    <span class="resource-category">多媒体</span>
+                    <div class="resource-stats">
+                        <span><i class="fas fa-download"></i> 2,345</span>
+                        <span><i class="fas fa-star"></i> 4.7</span>
+                        <span><i class="fas fa-clock"></i> 3天前</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="resource-card" onclick="viewResource(4)">
+            <div class="resource-thumb">
+                <i class="fas fa-gamepad"></i>
+            </div>
+            <div class="resource-info">
+                <h3 class="resource-title">我的世界游戏资源包</h3>
+                <p class="resource-desc">精选的我的世界游戏模组和材质包合集，包含高清纹理包、酷炫光影效果和有趣玩法模组。</p>
+                <div class="resource-meta">
+                    <span class="resource-category">游戏</span>
+                    <div class="resource-stats">
+                        <span><i class="fas fa-download"></i> 8,901</span>
+                        <span><i class="fas fa-star"></i> 4.6</span>
+                        <span><i class="fas fa-clock"></i> 5天前</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="resource-card" onclick="viewResource(5)">
+            <div class="resource-thumb">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="resource-info">
+                <h3 class="resource-title">《重构：改善既有代码的设计》PDF</h3>
+                <p class="resource-desc">经典编程书籍PDF版，讲述如何通过重构改善代码质量，提升程序设计的艺术性和可维护性。</p>
+                <div class="resource-meta">
+                    <span class="resource-category">电子资料</span>
+                    <div class="resource-stats">
+                        <span><i class="fas fa-download"></i> 3,456</span>
+                        <span><i class="fas fa-star"></i> 5.0</span>
+                        <span><i class="fas fa-clock"></i> 1天前</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="resource-card" onclick="viewResource(6)">
+            <div class="resource-thumb">
+                <i class="fas fa-tools"></i>
+            </div>
+            <div class="resource-info">
+                <h3 class="resource-title">Postman API测试工具</h3>
+                <p class="resource-desc">强大的API接口测试工具，支持REST、GraphQL等多种协议，帮助开发者快速测试和调试API接口。</p>
+                <div class="resource-meta">
+                    <span class="resource-category">软件工具</span>
+                    <div class="resource-stats">
+                        <span><i class="fas fa-download"></i> 4,567</span>
+                        <span><i class="fas fa-star"></i> 4.8</span>
+                        <span><i class="fas fa-clock"></i> 4天前</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewResource(id) {
+            window.location.href = '/resource/' + id;
+        }
+
+        function filterResources() {
+            // 这里可以实现前端筛选逻辑
+            // 或者跳转到后端进行搜索
+            const category = document.getElementById('categoryFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+            const type = document.getElementById('typeFilter').value;
+
+            // 可以通过URL参数传递筛选条件
+            const params = new URLSearchParams();
+            if (category) params.append('category', category);
+            if (sort) params.append('sort', sort);
+            if (type) params.append('type', type);
+
+            const url = '/resources?' + params.toString();
+            window.location.href = url;
+        }
+
+        // 搜索表单提交
+        document.querySelector('.search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('searchInput').value;
+            if (query.trim()) {
+                window.location.href = '/search?q=' + encodeURIComponent(query);
+            }
+        });
+    </script>
+</body>
+</html>

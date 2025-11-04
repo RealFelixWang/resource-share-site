@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="资源分类浏览 - 资源分享平台">
+    <title>资源分类 - 资源分享平台</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 80px 0;
+            margin-top: 60px;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+
+        .categories-grid {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .category-header {
+            padding: 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-100%);
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover .category-header::before {
+            transform: translateY(0);
+        }
+
+        .category-card:nth-child(1) .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .category-card:nth-child(2) .category-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .category-card:nth-child(3) .category-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .category-card:nth-child(4) .category-header {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .category-card:nth-child(5) .category-header {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .category-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .category-name {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .category-desc {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .category-stats {
+            padding: 25px;
+            background: #f8f9fa;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .stat-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .subcategories {
+            max-width: 1200px;
+            margin: 20px auto 60px;
+            padding: 0 20px;
+        }
+
+        .subcategory-group {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .group-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .group-title i {
+            color: #667eea;
+        }
+
+        .subcategory-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .subcategory-tag {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .subcategory-tag:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/">
+                    <i class="fas fa-share-alt"></i>
+                    <span>资源分享平台</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="/">首页</a>
+                <a href="/resources">资源</a>
+                <a href="/articles">文章博客</a>
+                <a href="/categories" class="active">分类</a>
+                <a href="/search">搜索</a>
+                <button class="btn-login" onclick="location.href='/login'">
+                    <i class="fas fa-sign-in-alt"></i>
+                    登录
+                </button>
+                <button class="btn-register" onclick="location.href='/register'" style="margin-left: 10px; padding: 8px 20px; background: #43e97b; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-user-plus"></i>
+                    注册
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">
+                <i class="fas fa-folder-open"></i>
+                浏览资源分类
+            </h1>
+            <p class="hero-subtitle">按分类查找您需要的资源，快速定位优质内容</p>
+        </div>
+    </section>
+
+    <!-- 主要分类 -->
+    <div class="categories-grid">
+        <div class="category-card" onclick="viewCategory('software')">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fas fa-desktop"></i>
+                </div>
+                <h2 class="category-name">软件工具</h2>
+                <p class="category-desc">各类实用软件和开发工具</p>
+            </div>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">资源数量</span>
+                    <span class="stat-value">1,234</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">今日更新</span>
+                    <span class="stat-value">23</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">本周热门</span>
+                    <span class="stat-value">156</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-card" onclick="viewCategory('document')">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h2 class="category-name">电子资料</h2>
+                <p class="category-desc">电子书、文档、教程等学习资料</p>
+            </div>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">资源数量</span>
+                    <span class="stat-value">2,567</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">今日更新</span>
+                    <span class="stat-value">45</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">本周热门</span>
+                    <span class="stat-value">289</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-card" onclick="viewCategory('multimedia')">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fas fa-photo-video"></i>
+                </div>
+                <h2 class="category-name">多媒体</h2>
+                <p class="category-desc">电影、音乐、图片等娱乐资源</p>
+            </div>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">资源数量</span>
+                    <span class="stat-value">3,456</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">今日更新</span>
+                    <span class="stat-value">67</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">本周热门</span>
+                    <span class="stat-value">412</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-card" onclick="viewCategory('game')">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h2 class="category-name">游戏</h2>
+                <p class="category-desc">游戏资源、游戏补丁等</p>
+            </div>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">资源数量</span>
+                    <span class="stat-value">4,321</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">今日更新</span>
+                    <span class="stat-value">89</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">本周热门</span>
+                    <span class="stat-value">534</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-card" onclick="viewCategory('other')">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                <h2 class="category-name">其他</h2>
+                <p class="category-desc">其他类型的资源</p>
+            </div>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">资源数量</span>
+                    <span class="stat-value">789</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">今日更新</span>
+                    <span class="stat-value">12</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">本周热门</span>
+                    <span class="stat-value">78</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 子分类 -->
+    <div class="subcategories">
+        <div class="subcategory-group">
+            <h3 class="group-title">
+                <i class="fas fa-code"></i>
+                软件工具 - 编程开发
+            </h3>
+            <div class="subcategory-tags">
+                <a href="/resources?category=software&sub=ide" class="subcategory-tag">IDE编辑器</a>
+                <a href="/resources?category=software&sub=debug" class="subcategory-tag">调试工具</a>
+                <a href="/resources?category=software&sub=version" class="subcategory-tag">版本控制</a>
+                <a href="/resources?category=software&sub=framework" class="subcategory-tag">框架库</a>
+                <a href="/resources?category=software&sub=database" class="subcategory-tag">数据库工具</a>
+            </div>
+        </div>
+
+        <div class="subcategory-group">
+            <h3 class="group-title">
+                <i class="fas fa-book-open"></i>
+                电子资料 - 学习文档
+            </h3>
+            <div class="subcategory-tags">
+                <a href="/resources?category=document&sub=programming" class="subcategory-tag">编程教程</a>
+                <a href="/resources?category=document&sub=design" class="subcategory-tag">设计指南</a>
+                <a href="/resources?category=document&sub=language" class="subcategory-tag">语言学习</a>
+                <a href="/resources?category=document&sub=certificate" class="subcategory-tag">认证考试</a>
+                <a href="/resources?category=document&sub=manual" class="subcategory-tag">使用手册</a>
+            </div>
+        </div>
+
+        <div class="subcategory-group">
+            <h3 class="group-title">
+                <i class="fas fa-film"></i>
+                多媒体 - 视频音频
+            </h3>
+            <div class="subcategory-tags">
+                <a href="/resources?category=multimedia&sub=movie" class="subcategory-tag">电影</a>
+                <a href="/resources?category=multimedia&sub=music" class="subcategory-tag">音乐</a>
+                <a href="/resources?category=multimedia&sub=tutorial" class="subcategory-tag">教学视频</a>
+                <a href="/resources?category=multimedia&sub=image" class="subcategory-tag">图片素材</a>
+                <a href="/resources?category=multimedia&sub=audio" class="subcategory-tag">音频素材</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewCategory(category) {
+            window.location.href = '/resources?category=' + category;
+        }
+    </script>
+</body>
+</html>

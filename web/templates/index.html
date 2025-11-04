@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="资源分享平台 - 发现优质资源，分享知识价值">
+    <title>资源分享平台 - 发现优质资源</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 100px 0;
+            color: white;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .hero-title {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+            margin-bottom: 40px;
+        }
+
+        .search-box {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 18px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 50px;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 18px 35px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .search-box button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .hero-btn {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 50px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .hero-btn.primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .hero-btn.primary:hover {
+            background: #f0f0f0;
+        }
+
+        .section {
+            padding: 60px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .categories-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        }
+
+        .category-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .category-card:nth-child(1) .category-icon { color: #667eea; }
+        .category-card:nth-child(2) .category-icon { color: #f093fb; }
+        .category-card:nth-child(3) .category-icon { color: #4facfe; }
+        .category-card:nth-child(4) .category-icon { color: #43e97b; }
+        .category-card:nth-child(5) .category-icon { color: #fa709a; }
+
+        .category-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .category-count {
+            color: #999;
+            font-size: 0.95em;
+        }
+
+        .resources-section {
+            background: #f8f9fa;
+        }
+
+        .resources-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        }
+
+        .resource-thumb {
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+
+        .resource-info {
+            padding: 25px;
+        }
+
+        .resource-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .resource-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .resource-category {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+
+        .resource-stats {
+            display: flex;
+            gap: 15px;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .resource-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .view-more {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .btn-more {
+            padding: 12px 40px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-more:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .section-divider {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .divider-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .hot-section {
+            background: white;
+        }
+
+        .latest-section {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/">
+                    <i class="fas fa-share-alt"></i>
+                    <span>资源分享平台</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="/" class="active">首页</a>
+                <a href="/resources">资源</a>
+                <a href="/articles">文章博客</a>
+                <a href="/categories">分类</a>
+                <a href="/search">搜索</a>
+                <button class="btn-login" onclick="location.href='/login'">
+                    <i class="fas fa-sign-in-alt"></i>
+                    登录
+                </button>
+                <button class="btn-register" onclick="location.href='/register'" style="margin-left: 10px; padding: 8px 20px; background: #43e97b; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-user-plus"></i>
+                    注册
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">
+                <i class="fas fa-search"></i>
+                发现优质资源
+            </h1>
+            <p class="hero-subtitle">分享知识，收获价值 - 海量资源等你来发现</p>
+
+            <form class="search-box" action="/search" method="GET">
+                <input type="text" name="q" placeholder="搜索您需要的软件、教程、资料或工具...">
+                <button type="submit">
+                    <i class="fas fa-search"></i>
+                    搜索
+                </button>
+            </form>
+
+            <div class="hero-actions">
+                <a href="/resources" class="hero-btn primary">
+                    <i class="fas fa-th-large"></i>
+                    浏览资源
+                </a>
+                <a href="/categories" class="hero-btn">
+                    <i class="fas fa-folder-open"></i>
+                    查看分类
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 主要分类 -->
+    <section class="section">
+        <div class="section-header">
+            <h2 class="section-title">资源分类</h2>
+            <p class="section-subtitle">按分类快速找到您需要的资源</p>
+        </div>
+        <div class="categories-grid">
+            <a href="/resources?category=software" class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-desktop"></i>
+                </div>
+                <h3 class="category-name">软件工具</h3>
+                <p class="category-count">1,234+ 资源</p>
+            </a>
+
+            <a href="/resources?category=document" class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3 class="category-name">电子资料</h3>
+                <p class="category-count">2,567+ 资源</p>
+            </a>
+
+            <a href="/resources?category=multimedia" class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-photo-video"></i>
+                </div>
+                <h3 class="category-name">多媒体</h3>
+                <p class="category-count">3,456+ 资源</p>
+            </a>
+
+            <a href="/resources?category=game" class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3 class="category-name">游戏</h3>
+                <p class="category-count">4,321+ 资源</p>
+            </a>
+
+            <a href="/resources?category=other" class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                <h3 class="category-name">其他</h3>
+                <p class="category-count">789+ 资源</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- 热门资源 -->
+    <section class="section hot-section">
+        <div class="section-divider">
+            <h2 class="divider-title">
+                <i class="fas fa-fire" style="color: #ff6b6b;"></i>
+                热门资源
+            </h2>
+        </div>
+        <div class="resources-grid">
+            <div class="resource-card" onclick="location.href='/resource/1'">
+                <div class="resource-thumb">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">Go语言入门教程</h3>
+                    <p class="resource-desc">从零开始学习Go语言编程，包含基础语法、实战项目和最佳实践。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">电子资料</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 1,234</span>
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/2'">
+                <div class="resource-thumb">
+                    <i class="fas fa-desktop"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">Visual Studio Code</h3>
+                    <p class="resource-desc">微软开源的免费代码编辑器，支持多种编程语言，丰富的插件生态。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">软件工具</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 5,678</span>
+                            <span><i class="fas fa-star"></i> 4.9</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/3'">
+                <div class="resource-thumb">
+                    <i class="fas fa-film"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">Docker容器技术教程</h3>
+                    <p class="resource-desc">深入学习Docker容器技术，包括镜像、容器、网络等核心概念。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">多媒体</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 2,345</span>
+                            <span><i class="fas fa-star"></i> 4.7</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/4'">
+                <div class="resource-thumb">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">我的世界资源包</h3>
+                    <p class="resource-desc">精选的游戏模组和材质包合集，包含高清纹理包和酷炫光影效果。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">游戏</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 8,901</span>
+                            <span><i class="fas fa-star"></i> 4.6</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/5'">
+                <div class="resource-thumb">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">《重构》PDF</h3>
+                    <p class="resource-desc">经典编程书籍，讲述如何通过重构改善代码质量，提升程序设计水平。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">电子资料</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 3,456</span>
+                            <span><i class="fas fa-star"></i> 5.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/6'">
+                <div class="resource-thumb">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">Postman API工具</h3>
+                    <p class="resource-desc">强大的API接口测试工具，支持REST、GraphQL等多种协议。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">软件工具</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 4,567</span>
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="view-more">
+            <a href="/resources" class="btn-more">
+                <i class="fas fa-th-large"></i>
+                查看更多资源
+            </a>
+        </div>
+    </section>
+
+    <!-- 最新资源 -->
+    <section class="section latest-section">
+        <div class="section-divider">
+            <h2 class="divider-title">
+                <i class="fas fa-clock" style="color: #4facfe;"></i>
+                最新资源
+            </h2>
+        </div>
+        <div class="resources-grid">
+            <div class="resource-card" onclick="location.href='/resource/7'">
+                <div class="resource-thumb">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">Python数据分析实战</h3>
+                    <p class="resource-desc">使用Python进行数据分析的完整教程，包含pandas、numpy等库的使用。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">电子资料</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 567</span>
+                            <span><i class="fas fa-star"></i> 4.9</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/8'">
+                <div class="resource-thumb">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">Figma设计工具</h3>
+                    <p class="resource-desc">专业的UI/UX设计工具，支持原型设计和协作功能。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">软件工具</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 423</span>
+                            <span><i class="fas fa-star"></i> 4.7</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/9'">
+                <div class="resource-thumb">
+                    <i class="fas fa-video"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">React Hooks视频教程</h3>
+                    <p class="resource-desc">深入学习React Hooks，从基础到高级应用的完整视频教程。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">多媒体</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 789</span>
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/10'">
+                <div class="resource-thumb">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">MySQL性能优化指南</h3>
+                    <p class="resource-desc">MySQL数据库性能优化的最佳实践和实战案例。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">电子资料</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 345</span>
+                            <span><i class="fas fa-star"></i> 4.6</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/11'">
+                <div class="resource-thumb">
+                    <i class="fas fa-image"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">免费图片素材库</h3>
+                    <p class="resource-desc">高质量的免费图片素材，适用于各种设计和项目需求。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">多媒体</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 1,234</span>
+                            <span><i class="fas fa-star"></i> 4.9</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resource-card" onclick="location.href='/resource/12'">
+                <div class="resource-thumb">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="resource-info">
+                    <h3 class="resource-title">Unity游戏开发教程</h3>
+                    <p class="resource-desc">从零开始学习Unity游戏开发，包含3D游戏制作完整流程。</p>
+                    <div class="resource-meta">
+                        <span class="resource-category">游戏</span>
+                        <div class="resource-stats">
+                            <span><i class="fas fa-download"></i> 678</span>
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="view-more">
+            <a href="/resources" class="btn-more">
+                <i class="fas fa-th-large"></i>
+                查看更多资源
+            </a>
+        </div>
+    </section>
+
+    <!-- 平台统计 -->
+    <section class="section stats-section">
+        <div class="section-header">
+            <h2 class="section-title">平台数据</h2>
+            <p class="section-subtitle">用数字说话，优质资源触手可及</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file"></i>
+                </div>
+                <div class="stat-number">12,367</div>
+                <div class="stat-label">优质资源</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number">5,892</div>
+                <div class="stat-label">注册用户</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <div class="stat-number">89,432</div>
+                <div class="stat-label">总下载量</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-number">4.8</div>
+                <div class="stat-label">平均评分</div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function goToLogin() {
+            alert('登录功能开发中...');
+        }
+
+        function goToRegister() {
+            alert('注册功能开发中...');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+# 生产环境配置
+# ⚠️ 重要: 生产环境请修改所有默认值!
+
+app:
+  environment: "production"
+  port: 8080
+  secret_key: "CHANGE-THIS-TO-A-RANDOM-STRING-IN-PRODUCTION" # 必须修改!
+  timeout: 30
+  max_body_size: 10
+
+database:
+  type: "mysql"
+  host: "localhost"
+  port: "3306"
+  name: "resource_share_site"
+  user: "root"
+  password: "123456" # 请使用强密码!
+  charset: "utf8mb4"
+
+redis:
+  host: "localhost"
+  port: "6379"
+  password: "RedisPassword123!" # 如果Redis有密码，请填写
+  db: 0
+  pool_size: 100
+  min_idle_conns: 20
+
+log:
+  level: "warn"
+  format: "json"
+  output: "file"
+  filename: "logs/app.log"
+  max_size: 500
+  max_age: 90
+  max_backups: 30
+# 安全建议:
+# 1. 修改secret_key为随机字符串
+# 2. 修改数据库密码
+# 3. 设置Redis密码
+# 4. 配置防火墙规则
+# 5. 启用HTTPS
+# 6. 配置日志轮转
+# 7. 设置监控告警

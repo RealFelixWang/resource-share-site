@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章博客 - 资源分享网站</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { margin-top: 70px; }
+        .card { transition: transform 0.3s, box-shadow 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .section-title { color: #333; margin-bottom: 30px; text-align: center; }
+        .articles-container { background: #f8f9fa; padding: 40px 0; }
+        .article-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .article-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .article-card img { width: 100%; height: 200px; object-fit: cover; }
+        .article-content { padding: 20px; }
+        .article-meta { display: flex; align-items: center; gap: 15px; color: #666; font-size: 0.9rem; margin: 10px 0; }
+        .filter-section { background: white; padding: 30px; margin-bottom: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/">
+                    <i class="fas fa-share-alt"></i>
+                    <span>资源分享平台</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="/">首页</a>
+                <a href="/resources">资源</a>
+                <a href="/articles" class="active">文章博客</a>
+                <a href="/categories">分类</a>
+                <a href="/search">搜索</a>
+                {{if .CurrentUser}}
+                {{if .IsAdmin}}
+                <a href="/admin" style="color: #e74c3c;">管理后台</a>
+                {{end}}
+                <span style="margin-left: 15px; color: #666;">欢迎, {{.CurrentUser.Username}}</span>
+                <a href="/logout" style="margin-left: 15px; color: #e74c3c;">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </a>
+                {{else}}
+                <button class="btn-login" onclick="location.href='/login'">
+                    <i class="fas fa-sign-in-alt"></i>
+                    登录
+                </button>
+                <button class="btn-register" onclick="location.href='/register'" style="margin-left: 10px; padding: 8px 20px; background: #43e97b; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-user-plus"></i>
+                    注册
+                </button>
+                {{end}}
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero-section" style="padding: 60px 0; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-top: 0;">
+        <div class="container">
+            <h1 style="font-size: 3em; margin-bottom: 20px;">
+                <i class="fas fa-blog"></i>
+                文章博客
+            </h1>
+            <p style="font-size: 1.2em; opacity: 0.9;">发现精彩内容，分享知识与见解</p>
+        </div>
+    </section>
+
+    <!-- 筛选器 -->
+    <section class="filter-section">
+        <div class="container">
+            <form method="GET" action="/articles" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; align-items: end;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: #666; font-weight: 500;">搜索关键词</label>
+                    <input type="text" name="keyword" value="{{.Keyword}}" placeholder="搜索文章..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: #666; font-weight: 500;">分类</label>
+                    <select name="category" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="">全部分类</option>
+                        {{range .Categories}}
+                        <option value="{{.}}" {{if eq $.SelectedCategory .}}selected{{end}}>{{.}}</option>
+                        {{end}}
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" style="padding: 12px 30px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        <i class="fas fa-search"></i> 搜索
+                    </button>
+                    <a href="/articles" style="padding: 12px 30px; background: #f8f9fa; color: #333; border: 1px solid #ddd; border-radius: 5px; text-decoration: none;">重置</a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- 文章列表 -->
+    <section class="articles-container">
+        <div class="container">
+            {{if .Articles}}
+            <div class="article-grid">
+                {{range .Articles}}
+                <div class="article-card">
+                    {{if .FeaturedImage}}
+                    <img src="{{.FeaturedImage}}" alt="{{.Title}}">
+                    {{else}}
+                    <div style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-newspaper" style="font-size: 4rem; color: white;"></i>
+                    </div>
+                    {{end}}
+                    <div class="article-content">
+                        <div class="article-meta">
+                            <span style="background: #667eea; color: white; padding: 4px 12px; border-radius: 3px;">{{.Category}}</span>
+                            {{if .Tags}}
+                            <span style="color: #999;">{{.Tags}}</span>
+                            {{end}}
+                        </div>
+                        <h3 style="margin: 15px 0; font-size: 1.3rem;">
+                            <a href="/article/{{.Slug}}" style="color: #333; text-decoration: none;">{{.Title}}</a>
+                        </h3>
+                        {{if .Excerpt}}
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 15px;">{{.Excerpt}}</p>
+                        {{end}}
+                        <div class="article-meta" style="border-top: 1px solid #eee; padding-top: 15px; margin-top: 15px;">
+                            <span><i class="fas fa-user"></i> {{.AuthorName}}</span>
+                            <span><i class="fas fa-calendar"></i> {{.PublishedAt}}</span>
+                            <span><i class="fas fa-eye"></i> {{.ViewCount}}</span>
+                            <span><i class="fas fa-heart"></i> {{.LikeCount}}</span>
+                            <span><i class="fas fa-comment"></i> {{.CommentCount}}</span>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+
+            <!-- 分页 -->
+            {{if .Pagination}}
+            <div style="text-align: center; margin-top: 40px;">
+                <div style="background: white; padding: 20px; border-radius: 10px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    {{if .Pagination.HasPrev}}
+                    <a href="?page={{.Pagination.PrevPage}}{{if .Keyword}}&keyword={{.Keyword}}{{end}}{{if .SelectedCategory}}&category={{.SelectedCategory}}{{end}}" style="padding: 10px 20px; margin: 0 10px; background: #f8f9fa; border-radius: 5px; text-decoration: none; color: #333;">
+                        <i class="fas fa-chevron-left"></i> 上一页
+                    </a>
+                    {{else}}
+                    <span style="padding: 10px 20px; margin: 0 10px; background: #e9ecef; border-radius: 5px; color: #adb5bd;">
+                        <i class="fas fa-chevron-left"></i> 上一页
+                    </span>
+                    {{end}}
+                    <span style="padding: 10px 20px; margin: 0 10px; color: #666;">
+                        第 {{.Pagination.Page}} 页，共 {{.Pagination.TotalPages}} 页
+                    </span>
+                    {{if .Pagination.HasNext}}
+                    <a href="?page={{.Pagination.NextPage}}{{if .Keyword}}&keyword={{.Keyword}}{{end}}{{if .SelectedCategory}}&category={{.SelectedCategory}}{{end}}" style="padding: 10px 20px; margin: 0 10px; background: #f8f9fa; border-radius: 5px; text-decoration: none; color: #333;">
+                        下一页 <i class="fas fa-chevron-right"></i>
+                    </a>
+                    {{else}}
+                    <span style="padding: 10px 20px; margin: 0 10px; background: #e9ecef; border-radius: 5px; color: #adb5bd;">
+                        下一页 <i class="fas fa-chevron-right"></i>
+                    </span>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+
+            {{else}}
+            <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 10px;">
+                <i class="fas fa-newspaper" style="font-size: 5rem; color: #ddd; margin-bottom: 20px;"></i>
+                <h3 style="color: #666; margin-bottom: 10px;">暂无文章</h3>
+                <p style="color: #999;">暂时没有找到符合条件的文章</p>
+            </div>
+            {{end}}
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer style="background: white; padding: 40px 0; margin-top: 60px; border-top: 1px solid #eee;">
+        <div class="container">
+            <div style="text-align: center; color: #666;">
+                <p>&copy; 2024 资源分享网站. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

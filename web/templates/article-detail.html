@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Article.Title}} - 资源分享网站</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { margin-top: 70px; }
+        .content img { max-width: 100%; height: auto; }
+        .comment-item:hover { background-color: #f9fafb; }
+        .article-container { background: #f8f9fa; padding: 40px 0; min-height: 100vh; }
+        .article-content { background: white; border-radius: 10px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .article-header { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+        .article-meta { display: flex; align-items: center; gap: 20px; color: #666; font-size: 0.95rem; margin: 15px 0; flex-wrap: wrap; }
+        .article-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-like { padding: 10px 20px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: all 0.3s; }
+        .btn-like:hover { background: #e9ecef; }
+        .comments-section { background: white; border-radius: 10px; padding: 30px; margin-top: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .comment-form textarea { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 5px; resize: vertical; font-family: inherit; }
+        .comment-form button { padding: 12px 30px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; }
+        .comment-item { padding: 20px; border-bottom: 1px solid #eee; }
+        .comment-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/">
+                    <i class="fas fa-share-alt"></i>
+                    <span>资源分享平台</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="/">首页</a>
+                <a href="/resources">资源</a>
+                <a href="/articles" class="active">文章博客</a>
+                <a href="/categories">分类</a>
+                <a href="/search">搜索</a>
+                {{if .CurrentUser}}
+                {{if .IsAdmin}}
+                <a href="/admin" style="color: #e74c3c;">管理后台</a>
+                {{end}}
+                <span style="margin-left: 15px; color: #666;">欢迎, {{.CurrentUser.Username}}</span>
+                <a href="/logout" style="margin-left: 15px; color: #e74c3c;">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </a>
+                {{else}}
+                <button class="btn-login" onclick="location.href='/login'">
+                    <i class="fas fa-sign-in-alt"></i>
+                    登录
+                </button>
+                <button class="btn-register" onclick="location.href='/register'" style="margin-left: 10px; padding: 8px 20px; background: #43e97b; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-user-plus"></i>
+                    注册
+                </button>
+                {{end}}
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <div class="article-container">
+        <div class="container" style="max-width: 1000px;">
+            <!-- 返回按钮 -->
+            <a href="/articles" style="display: inline-flex; align-items: center; color: #667eea; text-decoration: none; margin-bottom: 20px; font-weight: 500;">
+                <i class="fas fa-arrow-left"></i>
+                <span style="margin-left: 8px;">返回文章列表</span>
+            </a>
+
+            <!-- 文章内容 -->
+            <article class="article-content">
+                <!-- 文章头部 -->
+                <div class="article-header">
+                    <div class="article-meta">
+                        <span style="background: #667eea; color: white; padding: 5px 15px; border-radius: 5px;">{{.Article.Category}}</span>
+                        <span><i class="fas fa-calendar"></i> {{.Article.PublishedAt}}</span>
+                        <span><i class="fas fa-user"></i> {{.Article.Author.Username}}</span>
+                        <span><i class="fas fa-eye"></i> {{.Article.ViewCount}} 阅读</span>
+                        <span><i class="fas fa-heart"></i> {{.Article.LikeCount}} 点赞</span>
+                        <span><i class="fas fa-comment"></i> {{.CommentsTotal}} 评论</span>
+                    </div>
+                    <h1 style="font-size: 2.5em; margin: 20px 0; color: #333; line-height: 1.3;">{{.Article.Title}}</h1>
+                </div>
+
+                <!-- 文章标签 -->
+                {{if .Article.Tags}}
+                <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        {{range splitTags .Article.Tags}}
+                        <span style="background: #e9ecef; padding: 5px 12px; border-radius: 3px; color: #666; font-size: 0.9rem;">{{.}}</span>
+                        {{end}}
+                    </div>
+                </div>
+                {{end}}
+
+                <!-- 特色图片 -->
+                {{if .Article.FeaturedImage}}
+                <div style="margin: 30px 0; border-radius: 10px; overflow: hidden;">
+                    <img src="{{.Article.FeaturedImage}}" alt="{{.Article.Title}}" style="width: 100%; max-height: 500px; object-fit: cover;">
+                </div>
+                {{end}}
+
+                <!-- 文章摘要 -->
+                {{if .Article.Excerpt}}
+                <div style="background: #f8f9fa; border-left: 4px solid #667eea; padding: 20px; margin: 30px 0; border-radius: 5px;">
+                    <p style="color: #666; line-height: 1.8; margin: 0; font-style: italic;">{{.Article.Excerpt}}</p>
+                </div>
+                {{end}}
+
+                <!-- 文章正文 -->
+                <div class="content" style="line-height: 1.8; color: #333; font-size: 1.05rem;">
+                    {{.Article.Content}}
+                </div>
+
+                <!-- 文章操作 -->
+                <div class="article-actions">
+                    <button id="likeBtn" class="btn-like" style="color: #e74c3c;">
+                        <i class="fas fa-heart"></i> 点赞
+                    </button>
+                    <button class="btn-like" onclick="shareArticle()">
+                        <i class="fas fa-share"></i> 分享
+                    </button>
+                </div>
+            </article>
+
+            <!-- 评论区域 -->
+            <div class="comments-section">
+                <h2 style="margin-bottom: 25px; color: #333; font-size: 1.8rem;">
+                    <i class="fas fa-comments"></i> 评论 ({{.CommentsTotal}})
+                </h2>
+
+                <!-- 发表评论 -->
+                {{if .CurrentUser}}
+                <div class="comment-form">
+                    <form id="commentForm" onsubmit="submitComment(event)">
+                        <input type="hidden" name="article_id" value="{{.Article.ID}}">
+                        <textarea name="content" rows="4" placeholder="写下你的评论..." required></textarea>
+                        <button type="submit">
+                            <i class="fas fa-paper-plane"></i> 发表评论
+                        </button>
+                        <p style="font-size: 0.9rem; color: #999; margin-top: 10px;">
+                            <i class="fas fa-info-circle"></i> 评论需要审核后才能显示
+                        </p>
+                    </form>
+                </div>
+                {{else}}
+                <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 5px;">
+                    <p style="color: #666; margin-bottom: 15px;">登录后才能发表评论</p>
+                    <a href="/login?redirect={{.CurrentPath}}" style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px;">
+                        <i class="fas fa-sign-in-alt"></i> 立即登录
+                    </a>
+                </div>
+                {{end}}
+
+                <!-- 评论列表 -->
+                <div id="commentsList" style="margin-top: 30px;">
+                    {{if .Comments}}
+                    <div>
+                        {{range .Comments}}
+                        <div class="comment-item">
+                            <div style="display: flex; gap: 15px;">
+                                <div style="width: 40px; height: 40px; background: #667eea; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                        <span style="font-weight: 600; color: #333;">{{.Username}}</span>
+                                        <span style="color: #999; font-size: 0.9rem;">{{.CreatedAt}}</span>
+                                    </div>
+                                    <p style="color: #666; line-height: 1.6; margin: 0;">{{.Content}}</p>
+                                    <div style="margin-top: 10px;">
+                                        <button onclick="likeComment({{.ID}})" style="background: none; border: none; color: #999; cursor: pointer; font-size: 0.9rem;">
+                                            <i class="fas fa-heart"></i> {{.LikeCount}}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                    {{else}}
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <i class="fas fa-comments" style="font-size: 3rem; color: #ddd; margin-bottom: 15px;"></i>
+                        <p>暂无评论，来发表第一个评论吧！</p>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer style="background: white; padding: 40px 0; margin-top: 60px; border-top: 1px solid #eee;">
+        <div class="container">
+            <div style="text-align: center; color: #666;">
+                <p>&copy; 2024 资源分享网站. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentPage = 1;
+        const articleId = {{.Article.ID}};
+
+        // 点赞文章
+        document.getElementById('likeBtn')?.addEventListener('click', async () => {
+            try {
+                const response = await fetch(`/api/articles/{{.Article.ID}}/like`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    location.reload();
+                }
+            } catch (error) {
+                alert('操作失败');
+            }
+        });
+
+        // 发表评论
+        async function submitComment(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/api/comments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        article_id: parseInt(formData.get('article_id')),
+                        content: formData.get('content')
+                    })
+                });
+
+                const data = await response.json();
+                if (data.code === 1000) {
+                    alert('评论提交成功，等待审核！');
+                    form.reset();
+                    location.reload();
+                } else {
+                    alert('评论提交失败：' + data.message);
+                }
+            } catch (error) {
+                alert('评论提交失败');
+            }
+        }
+
+        // 点赞评论
+        async function likeComment(commentId) {
+            try {
+                const response = await fetch(`/api/comments/${commentId}/like`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    location.reload();
+                }
+            } catch (error) {
+                alert('操作失败');
+            }
+        }
+
+        // 分享文章
+        function shareArticle() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{.Article.Title}}',
+                    text: '{{.Article.Excerpt}}',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('链接已复制到剪贴板');
+            }
+        }
+    </script>
+</body>
+</html>

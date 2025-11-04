@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="搜索资源 - 资源分享平台">
+    <title>搜索: {{.Query}} - 资源分享平台</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .search-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px 0;
+            margin-top: 60px;
+            color: white;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 50px;
+            outline: none;
+        }
+
+        .search-btn {
+            padding: 15px 30px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #ff5252;
+        }
+
+        .search-results {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .results-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .search-term {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sort-btn {
+            padding: 8px 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sort-btn:hover, .sort-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .result-item {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .result-item:hover {
+            transform: translateX(10px);
+        }
+
+        .result-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-title i {
+            color: #667eea;
+        }
+
+        .result-snippet {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .result-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .result-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .no-results i {
+            font-size: 5em;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .no-results h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .suggestions {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .suggestion-group {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .suggestion-title {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .suggestion-title i {
+            color: #667eea;
+        }
+
+        .suggestion-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .suggestion-tag {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .suggestion-tag:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        .page-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover, .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/">
+                    <i class="fas fa-share-alt"></i>
+                    <span>资源分享平台</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="/">首页</a>
+                <a href="/resources">资源</a>
+                <a href="/articles">文章博客</a>
+                <a href="/categories">分类</a>
+                <a href="/search" class="active">搜索</a>
+                <button class="btn-login" onclick="location.href='/login'">
+                    <i class="fas fa-sign-in-alt"></i>
+                    登录
+                </button>
+                <button class="btn-register" onclick="location.href='/register'" style="margin-left: 10px; padding: 8px 20px; background: #43e97b; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-user-plus"></i>
+                    注册
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 搜索头部 -->
+    <section class="search-header">
+        <div class="search-container">
+            <h1>
+                <i class="fas fa-search"></i>
+                搜索资源
+            </h1>
+            <p>查找您需要的软件、教程、文档或工具</p>
+            <form class="search-form" action="/search" method="GET">
+                <input type="text" class="search-input" name="q" placeholder="输入关键词..." value="{{.Query}}">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                    搜索
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- 搜索结果 -->
+    <div class="search-results">
+        <div class="results-header">
+            <div class="results-count">
+                找到 <span class="search-term">{{.Query}}</span> 相关结果约 1,234 条
+            </div>
+            <div class="sort-options">
+                <button class="sort-btn active" onclick="sortResults('relevance')">相关性</button>
+                <button class="sort-btn" onclick="sortResults('latest')">最新</button>
+                <button class="sort-btn" onclick="sortResults('popular')">热门</button>
+                <button class="sort-btn" onclick="sortResults('downloads')">下载量</button>
+            </div>
+        </div>
+
+        <div class="result-item" onclick="viewResource(1)">
+            <h3 class="result-title">
+                <i class="fas fa-file-pdf"></i>
+                Go语言<span class="highlight">入门</span>教程完整版
+            </h3>
+            <p class="result-snippet">
+                从零开始学习Go语言编程，本教程涵盖基础语法、数据类型、控制结构、函数、并发编程等核心概念。
+                <span class="highlight">入门</span>必备资料，适合初学者快速掌握Go语言开发。
+            </p>
+            <div class="result-meta">
+                <span><i class="fas fa-folder"></i> 电子资料</span>
+                <span><i class="fas fa-download"></i> 1,234次下载</span>
+                <span><i class="fas fa-star"></i> 4.8分</span>
+                <span><i class="fas fa-clock"></i> 2天前更新</span>
+            </div>
+        </div>
+
+        <div class="result-item" onclick="viewResource(2)">
+            <h3 class="result-title">
+                <i class="fas fa-code"></i>
+                <span class="highlight">Go</span>语言<span class="highlight">进阶</span>实战项目
+            </h3>
+            <p class="result-snippet">
+                深入学习Go语言高级特性，包括泛型、反射、插件系统等。通过实际项目练习，
+                提升<span class="highlight">Go</span>语言开发能力和项目经验。
+            </p>
+            <div class="result-meta">
+                <span><i class="fas fa-folder"></i> 电子资料</span>
+                <span><i class="fas fa-download"></i> 856次下载</span>
+                <span><i class="fas fa-star"></i> 4.9分</span>
+                <span><i class="fas fa-clock"></i> 5天前更新</span>
+            </div>
+        </div>
+
+        <div class="result-item" onclick="viewResource(3)">
+            <h3 class="result-title">
+                <i class="fas fa-desktop"></i>
+                Visual Studio Code - 强大的代码编辑器
+            </h3>
+            <p class="result-snippet">
+                微软开源的免费代码编辑器，支持Go语言插件和调试，界面简洁高效，
+                是Go开发者的首选IDE工具。
+            </p>
+            <div class="result-meta">
+                <span><i class="fas fa-folder"></i> 软件工具</span>
+                <span><i class="fas fa-download"></i> 5,678次下载</span>
+                <span><i class="fas fa-star"></i> 4.9分</span>
+                <span><i class="fas fa-clock"></i> 1周前更新</span>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <button class="page-btn" disabled>
+                <i class="fas fa-chevron-left"></i>
+                上一页
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn" onclick="goToPage(2)">2</button>
+            <button class="page-btn" onclick="goToPage(3)">3</button>
+            <span>...</span>
+            <button class="page-btn" onclick="goToPage(50)">50</button>
+            <button class="page-btn" onclick="goToPage(2)">
+                下一页
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 搜索建议 -->
+    <div class="suggestions">
+        <div class="suggestion-group">
+            <h3 class="suggestion-title">
+                <i class="fas fa-fire"></i>
+                热门搜索
+            </h3>
+            <div class="suggestion-tags">
+                <a href="/search?q=Python教程" class="suggestion-tag">Python教程</a>
+                <a href="/search?q=JavaScript" class="suggestion-tag">JavaScript</a>
+                <a href="/search?q=React" class="suggestion-tag">React</a>
+                <a href="/search?q=Vue" class="suggestion-tag">Vue</a>
+                <a href="/search?q=数据库" class="suggestion-tag">数据库</a>
+                <a href="/search?q=机器学习" class="suggestion-tag">机器学习</a>
+            </div>
+        </div>
+
+        <div class="suggestion-group">
+            <h3 class="suggestion-title">
+                <i class="fas fa-tag"></i>
+                相关搜索
+            </h3>
+            <div class="suggestion-tags">
+                <a href="/search?q=Go语言教程" class="suggestion-tag">Go语言教程</a>
+                <a href="/search?q=Gin框架" class="suggestion-tag">Gin框架</a>
+                <a href="/search?q=Go并发编程" class="suggestion-tag">Go并发编程</a>
+                <a href="/search?q=Go Web开发" class="suggestion-tag">Go Web开发</a>
+                <a href="/search?q=Go微服务" class="suggestion-tag">Go微服务</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewResource(id) {
+            window.location.href = '/resource/' + id;
+        }
+
+        function sortResults(type) {
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            const url = new URL(window.location);
+            url.searchParams.set('sort', type);
+            window.location.href = url.toString();
+        }
+
+        function goToPage(page) {
+            const url = new URL(window.location);
+            url.searchParams.set('page', page);
+            window.location.href = url.toString();
+        }
+    </script>
+</body>
+</html>
